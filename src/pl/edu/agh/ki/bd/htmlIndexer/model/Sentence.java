@@ -14,6 +14,11 @@ public class Sentence {
         this.setContent(content);
     }
 
+    public Sentence(String content, String url) {
+        this.content = content;
+        this.url = url;
+    }
+
     public long getId() {
         return id;
     }

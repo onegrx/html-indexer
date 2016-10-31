@@ -1,7 +1,9 @@
 package pl.edu.agh.ki.bd.htmlIndexer;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,7 +27,7 @@ public class Index {
         for (Element element : elements) {
             if (element.ownText().trim().length() > 1) {
                 for (String sentenceContent : element.ownText().split("\\. ")) {
-                    Sentence sentence = new Sentence(sentenceContent);
+                    Sentence sentence = new Sentence(sentenceContent, url);
                     session.persist(sentence);
                 }
             }
@@ -40,7 +42,11 @@ public class Index {
         Transaction transaction = session.beginTransaction();
 
         String query = "%" + words.replace(" ", "%") + "%";
-        List<String> result = session.createQuery("select s.content from Sentence s where s.content like :query", String.class).setParameter("query", query).getResultList();
+        List<Sentence> sentences = session.createQuery("select s from Sentence s where s.content like :query", Sentence.class)
+                .setParameter("query", query).getResultList();
+
+        List<String> result = sentences.stream().map(s -> s.getContent() + " -- " + s.getUrl())
+                .collect(Collectors.toCollection(LinkedList::new));
 
         transaction.commit();
         session.close();

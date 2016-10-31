@@ -10,7 +10,8 @@
                 <generator class="native"/>
         </id>
         <property name="content" type="text"/>
-                
+        <property name="url" type="text"/>
+
     </class>
  
 </hibernate-mapping>
