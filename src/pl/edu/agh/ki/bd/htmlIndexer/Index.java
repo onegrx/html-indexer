@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import pl.edu.agh.ki.bd.htmlIndexer.model.ProcessedUrl;
@@ -28,15 +27,14 @@ public class Index {
         Document doc = Jsoup.connect(url).get();
         Elements elements = doc.body().select("*");
 
-        for (Element element : elements) {
-            if (element.ownText().trim().length() > 1) {
-                for (String sentenceContent : element.ownText().split("\\. ")) {
-                    Sentence sentence = new Sentence(sentenceContent, processedUrl);
-                    session.persist(sentence);
-                }
+        elements.stream().filter(element -> element.ownText().trim().length() > 1).forEach(element -> {
+            for (String sentenceContent : element.ownText().split("\\. ")) {
+                Sentence sentence = new Sentence(sentenceContent, processedUrl);
+                session.persist(sentence);
             }
-        }
+        });
 
+        //Is it necessary?
         session.persist(processedUrl);
 
         transaction.commit();

@@ -25,15 +25,16 @@ public class HtmlIndexerApp {
                 System.out.println("'x'      	- exit HtmlIndexer");
                 System.out.println("'i URLs'  	- index URLs, space separated");
                 System.out.println("'f WORDS'	- find sentences containing all WORDs, space separated");
+                System.out.println("'m COUNT'	- find sentences longer than given number of characters");
             } else if (command.startsWith("x")) {
                 System.out.println("HtmlIndexer terminated.");
                 HibernateUtils.shutdown();
                 break;
             } else if (command.startsWith("i ")) {
                 if (command.equals("i docs")) {
-                    indexWebpage(indexer, "i http://docs.jboss.org/hibernate/orm/4.3/manual/en-US/html_single/");
+                    indexUrl(indexer, "i http://docs.jboss.org/hibernate/orm/4.3/manual/en-US/html_single/");
                 } else {
-                    indexWebpage(indexer, command);
+                    indexUrl(indexer, command);
                 }
             } else if (command.startsWith("f ")) {
                 for (String sentence : indexer.findSentencesByWords(command.substring(2))) {
@@ -42,7 +43,7 @@ public class HtmlIndexerApp {
             } else if (command.startsWith("m ")) {
                 int length = Integer.parseInt(command.substring(2));
                 for (String sentence : indexer.findSentencesLongerThan(length)) {
-                    System.out.println("Sentence longer than " + length +" :" + sentence);
+                    System.out.println("Sentence longer than " + length + ": " + sentence.trim().replace("\n", "").replace("\r", ""));
                 }
             }
 
@@ -52,7 +53,7 @@ public class HtmlIndexerApp {
 
     }
 
-    private static void indexWebpage(Index indexer, String command) {
+    private static void indexUrl(Index indexer, String command) {
         for (String url : command.substring(2).split(" ")) {
             try {
                 indexer.indexWebPage(url);
