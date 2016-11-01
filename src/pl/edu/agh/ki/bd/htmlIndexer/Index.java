@@ -1,6 +1,7 @@
 package pl.edu.agh.ki.bd.htmlIndexer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import pl.edu.agh.ki.bd.htmlIndexer.model.ProcessedUrl;
 import pl.edu.agh.ki.bd.htmlIndexer.model.Sentence;
 import pl.edu.agh.ki.bd.htmlIndexer.persistence.HibernateUtils;
 
@@ -21,17 +23,21 @@ public class Index {
         final Session session = HibernateUtils.getSession();
         final Transaction transaction = session.beginTransaction();
 
+        ProcessedUrl processedUrl = new ProcessedUrl(url, new Date());
+
         Document doc = Jsoup.connect(url).get();
         Elements elements = doc.body().select("*");
 
         for (Element element : elements) {
             if (element.ownText().trim().length() > 1) {
                 for (String sentenceContent : element.ownText().split("\\. ")) {
-                    Sentence sentence = new Sentence(sentenceContent, url);
+                    Sentence sentence = new Sentence(sentenceContent, processedUrl);
                     session.persist(sentence);
                 }
             }
         }
+
+        session.persist(processedUrl);
 
         transaction.commit();
         session.close();
@@ -45,8 +51,9 @@ public class Index {
         List<Sentence> sentences = session.createQuery("select s from Sentence s where s.content like :query", Sentence.class)
                 .setParameter("query", query).getResultList();
 
-        List<String> result = sentences.stream().map(s -> s.getContent() + " -- " + s.getUrl())
+        List<String> result = sentences.stream().map(s -> s.getContent() + " -- " + s.getProcessedUrl().getUrl())
                 .collect(Collectors.toCollection(LinkedList::new));
+
 
         transaction.commit();
         session.close();

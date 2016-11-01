@@ -5,7 +5,7 @@ public class Sentence {
 
     private long id;
     private String content;
-    private String url;
+    private ProcessedUrl processedUrl;
 
     public Sentence() {
     }
@@ -14,9 +14,9 @@ public class Sentence {
         this.setContent(content);
     }
 
-    public Sentence(String content, String url) {
+    public Sentence(String content, ProcessedUrl processedUrl) {
         this.content = content;
-        this.url = url;
+        this.processedUrl = processedUrl;
     }
 
     public long getId() {
@@ -35,11 +35,11 @@ public class Sentence {
         this.content = content;
     }
 
-    public String getUrl() {
-        return url;
+    public ProcessedUrl getProcessedUrl() {
+        return processedUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setProcessedUrl(ProcessedUrl processedUrl) {
+        this.processedUrl = processedUrl;
     }
 }

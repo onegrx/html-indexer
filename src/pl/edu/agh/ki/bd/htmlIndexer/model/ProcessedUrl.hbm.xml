@@ -5,17 +5,19 @@
 
 <hibernate-mapping package="pl.edu.agh.ki.bd.htmlIndexer.model">
 
-    <class name="Sentence">
-        <id name="id">
+    <class name="ProcessedUrl">
+
+        <id name="id" column="processedUrlId">
             <generator class="native"/>
         </id>
-        <property name="content" type="text"/>
+        <property name="url" type="text"/>
+        <property name="date" type="date"/>
 
-        <many-to-one name="processedUrl" column="processedUrlId" cascade="all" not-null="true"/>
+        <set name="sentences" inverse="true">
+            <key column="processedUrlId"/>
+            <one-to-many class="Sentence"/>
+        </set>
 
     </class>
 
 </hibernate-mapping>
-
-
-

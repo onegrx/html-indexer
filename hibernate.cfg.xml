@@ -19,6 +19,7 @@
 		
 		<!-- Mappings -->
 		<mapping resource="pl/edu/agh/ki/bd/htmlIndexer/model/Sentence.hbm.xml" />
+		<mapping resource="pl/edu/agh/ki/bd/htmlIndexer/model/ProcessedUrl.hbm.xml" />
 
 </session-factory>
 </hibernate-configuration>
