@@ -1,13 +1,13 @@
 package pl.edu.agh.ki.bd.htmlIndexer;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.hibernate.query.criteria.internal.path.CollectionAttributeJoin;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -72,4 +72,28 @@ public class Index {
         return result;
     }
 
+    public void printSortedWebsites() {
+        Session session = HibernateUtils.getSession();
+
+        Query query = session.createQuery("select p.url, count(*)\n" +
+                "from ProcessedUrl p\n" +
+                "     join p.sentences s\n" +
+                "group by p.url\n" +
+                "order by count(*) desc");
+
+        List list = query.list();
+
+        Map<String, Long> websiteSentenceMap = new HashMap<>();
+
+        List<Object[]> sentencedWebsites = (List<Object[]>) list;
+        for (Object[] sW : sentencedWebsites) {
+            String url = (String) sW[0];
+            Long sentenceCount = (Long) sW[1];
+            websiteSentenceMap.put(url, sentenceCount);
+        }
+
+        websiteSentenceMap.forEach((url, count) ->
+                System.out.println(count + " sentences found on " + url));
+
+    }
 }

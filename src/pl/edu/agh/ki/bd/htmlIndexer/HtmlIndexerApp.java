@@ -45,6 +45,8 @@ public class HtmlIndexerApp {
                 for (String sentence : indexer.findSentencesLongerThan(length)) {
                     System.out.println("Sentence longer than " + length + ": " + sentence.trim().replace("\n", "").replace("\r", ""));
                 }
+            } else if (command.equals("s")) {
+                indexer.printSortedWebsites();
             }
 
             System.out.println("took " + (new Date().getTime() - startAt) + " ms");
